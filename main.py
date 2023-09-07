@@ -6,13 +6,17 @@ from telegram.ext import (
     CommandHandler, 
     MessageHandler, 
     filters, 
-    ContextTypes, 
+    ContextTypes,
+    Updater,
     PollAnswerHandler,
     PollHandler)
 import random
 
 TOKEN: Final = '6422765606:AAGBvW2RUfgb2yM0JIf_nTjiPs8m0_f6vgU'
 BOT_USERNAME: Final = '@paradeStateSurvey_bot'
+
+# u = Updater(TOKEN, use_context=True)
+# j = u.job_queue
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Hello, this is the Parade State Bot')
@@ -27,14 +31,27 @@ async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     # TODO: make pool repeat 3 times for all branches, allow undoing selection, add automatic scheduling to run poll everyday, deploy to website server
     today = str(date.today())
 
-    reports = ["Present", "RSO", "AM Leave", "PM Leave", "MC", "Others"]
-    message = await context.bot.send_poll(
+    # array of options for parade state poll
+    reports = ["PRESENT", "RSO", "AM LEAVE", "PM LEAVE", "MC", "DUTY", "OTHERS"]
+    # message = await context.bot.send_poll(
+    #     update.effective_chat.id,
+    #     "📋 Parade State for " + today,
+    #     reports,
+    #     is_anonymous=False,
+    #     allows_multiple_answers=True,
+    # )
+
+    # array of branches in Base HQ
+    branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
+    for branch in branches:
+        message = await context.bot.send_poll(
         update.effective_chat.id,
-        "Parade State for " + today,
+        "📋 Parade State for " + branch + ' ' + today,
         reports,
         is_anonymous=False,
         allows_multiple_answers=False,
     )
+    
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message_type:str = update.message.chat.type
@@ -57,6 +74,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} cause error {context.error}')
+
+# scheduled functions
+# j.run_once(custom_command, 10)
+""" Running on Mon, Tue, Wed, Thu, Fri = tuple(range(5)) at 10:00 UTC time """
+# t = datetime.time(hour=10, minute=00, second=00)
+# context.job_queue.run_daily(custom_command, t, days=tuple(range(5)))
 
 if __name__ == '__main__':
     print('Starting Parade State Bot')
