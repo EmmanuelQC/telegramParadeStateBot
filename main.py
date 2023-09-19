@@ -27,7 +27,7 @@ async def scheduled_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """ Running on Mon, Tue, Wed, Thu, Fri = tuple(range(5)) at 10:00 UTC time (6 pm SGT) """
     t = datetime.time(hour=10, minute=00, second=00)
     # TODO test run daily - running it from sunday to thursday
-    context.job_queue.run_daily(paradeState_call, t, days=tuple(0,1,2,3,4), data=None, name=None, chat_id=chat_id)
+    context.job_queue.run_daily(paradeState_call, t, days=tuple(range(5)), data=None, name=None, chat_id=chat_id)
 
     # test running paradeState after 5 second
     #context.job_queue.run_once(paradeState_call, 5, chat_id=chat_id)
@@ -40,7 +40,7 @@ async def paradeState_call(context: ContextTypes.DEFAULT_TYPE) -> None:
     tommorrow = today + datetime.timedelta(days=1)
 
     # array of options for parade state poll
-    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM/PM)", "OFF (AM/PM)", "DUTY", "MA", "OTHERS"]
+    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM)", "LEAVE (PM)", "OFF (AM)", "OFF (PM)" "DUTY", "MA", "COURSE", "OTHERS"]
 
     # array of branches in Base HQ
     branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
@@ -70,18 +70,28 @@ async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     tommorrow = today + datetime.timedelta(days=1)
 
     # array of options for parade state poll
-    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM/PM)", "OFF (AM/PM)", "DUTY", "MA", "OTHERS"]
+    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM)", "LEAVE (PM)", "OFF (AM)", "OFF (PM)" "DUTY", "MA", "COURSE", "OTHERS"]
 
     # array of branches in Base HQ
     branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
-    for branch in branches:
-        message = await context.bot.send_poll(
+
+    message = await context.bot.send_poll(
         update.effective_chat.id,
-        "📋 Parade State for " + branch + ' ' + str(tommorrow),
+        "📋 Parade State for " + branches[2] + ' ' + str(tommorrow),
         reports,
         is_anonymous=False,
         allows_multiple_answers=False,
     )
+    
+    """Sends polls for all branches in SBC"""
+    # for branch in branches:
+    #     message = await context.bot.send_poll(
+    #     update.effective_chat.id,
+    #     "📋 Parade State for " + branch + ' ' + str(tommorrow),
+    #     reports,
+    #     is_anonymous=False,
+    #     allows_multiple_answers=False,
+    # )
 
 # Handling all other messages
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
