@@ -40,7 +40,7 @@ async def paradeState_call(context: ContextTypes.DEFAULT_TYPE) -> None:
     tommorrow = today + datetime.timedelta(days=1)
 
     # array of options for parade state poll
-    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM)", "LEAVE (PM)", "OFF (AM)", "OFF (PM)" "DUTY", "MA", "COURSE", "OTHERS"]
+    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM/PM)", "OFF (AM/PM)", "DUTY", "MA (AM)", "MA (PM)", "OTHERS"]
 
     # array of branches in Base HQ
     branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
@@ -70,7 +70,7 @@ async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     tommorrow = today + datetime.timedelta(days=1)
 
     # array of options for parade state poll
-    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM)", "LEAVE (PM)", "OFF (AM)", "OFF (PM)" "DUTY", "MA", "COURSE", "OTHERS"]
+    reports = ["PRESENT", "RSO", "RSI", "LEAVE", "OFF (AM/PM)", "DUTY", "MA (AM)", "MA (PM)", "OTHERS"]
 
     # array of branches in Base HQ
     branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
