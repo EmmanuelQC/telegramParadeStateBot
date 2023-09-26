@@ -3,10 +3,10 @@ from typing import Final
 from telegram import Update
 from datetime import date
 from telegram.ext import (
-    Application, 
-    CommandHandler, 
-    MessageHandler, 
-    filters, 
+    Application,
+    CommandHandler,
+    MessageHandler,
+    filters,
     ContextTypes,
     Updater,
     PollAnswerHandler,
@@ -16,31 +16,38 @@ import random
 TOKEN: Final = '6422765606:AAGBvW2RUfgb2yM0JIf_nTjiPs8m0_f6vgU'
 BOT_USERNAME: Final = '@paradeStateSurvey_bot'
 
+
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Hello, this is the Parade State Bot')
 
+
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('I am Parade State Bot and will account for the parade state everyday to serve my country! Use /parade to test the full polling of the bot.')
+
 
 async def scheduled_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_message.chat_id
     """ Running on Mon, Tue, Wed, Thu, Fri = tuple(range(5)) at 10:00 UTC time (6 pm SGT) """
     t = datetime.time(hour=10, minute=00, second=00)
-    # TODO test run daily - running it from sunday to thursday
-    context.job_queue.run_daily(paradeState_call, t, days=tuple(range(5)), data=None, name=None, chat_id=chat_id)
+    # t = datetime.time(hour=6, minute=20, second=00)
 
-    # test running paradeState after 5 second
-    #context.job_queue.run_once(paradeState_call, 5, chat_id=chat_id)
+    context.job_queue.run_daily(paradeState_call, t, days=(
+        0, 1, 2, 3, 4), data=None, name=None, chat_id=chat_id)
+
+    print('Starting Scheduled Parade State')
+    # await update.message.reply_text('Starting Scheduled Parade State')
+
 
 async def paradeState_call(context: ContextTypes.DEFAULT_TYPE) -> None:
     job = context.job
 
-    today = date.today
+    today = date.today()
 
     tommorrow = today + datetime.timedelta(days=1)
 
     # array of options for parade state poll
-    reports = ["PRESENT", "RSO", "RSI", "LEAVE (AM/PM)", "OFF (AM/PM)", "DUTY", "MA (AM)", "MA (PM)", "OTHERS"]
+    reports = ["PRESENT", "RSO/MC", "RSI",
+               "LEAVE (AM/PM)", "OFF (AM/PM)", "DUTY", "MA (AM)", "MA (PM)", "COURSE", "OTHERS"]
 
     # array of branches in Base HQ
     branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
@@ -51,7 +58,7 @@ async def paradeState_call(context: ContextTypes.DEFAULT_TYPE) -> None:
         reports,
         is_anonymous=False,
         allows_multiple_answers=False,
-     )
+    )
 
     """Sends polls for all branches in SBC"""
     # for branch in branches:
@@ -63,6 +70,7 @@ async def paradeState_call(context: ContextTypes.DEFAULT_TYPE) -> None:
     #     allows_multiple_answers=False,
     # )
 
+
 async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # TODO: deploy to website server and create command to print the status of the parade state
     today = date.today()
@@ -70,7 +78,8 @@ async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     tommorrow = today + datetime.timedelta(days=1)
 
     # array of options for parade state poll
-    reports = ["PRESENT", "RSO", "RSI", "LEAVE", "OFF (AM/PM)", "DUTY", "MA (AM)", "MA (PM)", "OTHERS"]
+    reports = ["PRESENT", "RSO/MC", "RSI", "LEAVE (AM/PM)",
+               "OFF (AM/PM)", "DUTY", "MA (AM)", "MA (PM)", "COURSE",  "OTHERS"]
 
     # array of branches in Base HQ
     branches = ['S1 🫂', 'S3 🔫', 'S4 💸']
@@ -82,7 +91,7 @@ async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         is_anonymous=False,
         allows_multiple_answers=False,
     )
-    
+
     """Sends polls for all branches in SBC"""
     # for branch in branches:
     #     message = await context.bot.send_poll(
@@ -94,8 +103,10 @@ async def paradeState_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     # )
 
 # Handling all other messages
+
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    message_type:str = update.message.chat.type
+    message_type: str = update.message.chat.type
     text: str = update.message.text
 
     job = context.job
@@ -113,7 +124,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     print('Bot: ', response)
     await context.bot.send_message(job.chat_id, text=response)
-    #await update.message.reply_text(response)
+    # await update.message.reply_text(response)
+
 
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} cause error {context.error}')
@@ -137,3 +149,4 @@ if __name__ == '__main__':
     # checking updates in chat
     print('Polling...')
     app.run_polling(poll_interval=3)
+    
