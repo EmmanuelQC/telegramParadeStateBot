@@ -8,10 +8,8 @@ from telegram.ext import (
     MessageHandler,
     filters,
     ContextTypes,
-    Updater,
     PollAnswerHandler,
     PollHandler)
-import random
 
 TOKEN: Final = '6422765606:AAGBvW2RUfgb2yM0JIf_nTjiPs8m0_f6vgU'
 BOT_USERNAME: Final = '@paradeStateSurvey_bot'
@@ -27,15 +25,16 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def scheduled_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_message.chat_id
-    """ Running on Mon, Tue, Wed, Thu, Fri = tuple(range(5)) at 10:00 UTC time (6 pm SGT) """
-    t = datetime.time(hour=10, minute=00, second=00)
+    """ Running on Sun, Mon, Tue, Wed, Thu = tuple(range(5)) at 10:00 UTC time (8 pm SGT) """
+    t = datetime.time(hour=12, minute=00, second=00)
     # t = datetime.time(hour=6, minute=20, second=00)
-
+    
+    # *** A Warning will be sent to the console log but it will still work; IGNORE IT ***
     context.job_queue.run_daily(paradeState_call, t, days=(
         0, 1, 2, 3, 4), data=None, name=None, chat_id=chat_id)
 
     print('Starting Scheduled Parade State')
-    # await update.message.reply_text('Starting Scheduled Parade State')
+    await update.message.reply_text('Starting Scheduled Parade State')
 
 
 async def paradeState_call(context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -149,4 +148,3 @@ if __name__ == '__main__':
     # checking updates in chat
     print('Polling...')
     app.run_polling(poll_interval=3)
-    
